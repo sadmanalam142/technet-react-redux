@@ -1,4 +1,4 @@
-import { useGetCommentsQuery, useMakeCommentMutation } from '@/redux/api/apiSlice';
+import { useGetCommentsQuery, useMakeCommentMutation } from '@/redux/features/product/productApi';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Button } from './ui/button';
 import { Textarea } from './ui/textarea';

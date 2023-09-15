@@ -6,24 +6,32 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {useForm} from 'react-hook-form'
+import { useAppDispatch } from '@/redux/hook';
+import { createUser } from '@/redux/user/userSlice';
 
 type UserAuthFormProps = React.HTMLAttributes<HTMLDivElement>;
 
+interface ISignUpFormInputs {
+  email: string;
+  password: string;
+}
+
 export function SignupForm({ className, ...props }: UserAuthFormProps) {
-  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const dispatch = useAppDispatch()
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ISignUpFormInputs>()
 
-  async function onSubmit(event: React.SyntheticEvent) {
-    event.preventDefault();
-    setIsLoading(true);
-
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 3000);
+  const onSubmit = (data: ISignUpFormInputs) => {
+    dispatch(createUser({email: data.email, password: data.password}))
   }
 
   return (
     <div className={cn('grid gap-6', className)} {...props}>
-      <form onSubmit={onSubmit}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid gap-2">
           <div className="grid gap-1">
             <Label className="sr-only" htmlFor="email">
@@ -36,27 +44,27 @@ export function SignupForm({ className, ...props }: UserAuthFormProps) {
               autoCapitalize="none"
               autoComplete="email"
               autoCorrect="off"
-              disabled={isLoading}
+              {...register('email', { required: true })}
             />
+            {errors.email && <p>{errors.email.message}</p>}
             <Input
               id="password"
               placeholder="your password"
               type="password"
               autoCapitalize="none"
               autoCorrect="off"
-              disabled={isLoading}
+              {...register('password', { required: true })}
             />
+            {errors.password && <p>{errors.password.message}</p>}
             <Input
               id="password"
               placeholder="confirm password"
               type="password"
               autoCapitalize="none"
               autoCorrect="off"
-              disabled={isLoading}
             />
           </div>
-          <Button disabled={isLoading}>
-            {isLoading && <p>loading</p>}
+          <Button>
             Create Account
           </Button>
         </div>
@@ -71,8 +79,8 @@ export function SignupForm({ className, ...props }: UserAuthFormProps) {
           </span>
         </div>
       </div>
-      <Button variant="outline" type="button" disabled={isLoading}>
-        {isLoading ? <p>loading</p> : <p>GitHub</p>}
+      <Button variant="outline" type="button">
+        GitHub
       </Button>
     </div>
   );
